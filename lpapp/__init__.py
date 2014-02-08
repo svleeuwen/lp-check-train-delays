@@ -18,13 +18,14 @@ app = Flask(__name__, static_url_path='')
 app.config.from_object(__name__)
 
 try:
-    # If there's a settings file, use that: 
-    with open('../settings.cfg') as f:
-        app.config.from_pyfile('../settings.cfg')
+    # If there's a settings file, use that:
+    filename = os.path.join(os.path.dirname(__file__), '../settings.cfg')
+    with open(filename) as f:
+        app.config.from_pyfile(filename)
 
 except IOError as e:
     # Otherwise, use environment variables.
-    for var in ['BERGCLOUD_CONSUMER_TOKEN', 'BERGCLOUD_CONSUMER_TOKEN_SECRET', 'BERGCLOUD_ACCESS_TOKEN', 'BERGCLOUD_ACCESS_TOKEN_SECRET', 'DEBUG']:
+    for var in ['BERGCLOUD_CONSUMER_TOKEN', 'BERGCLOUD_CONSUMER_TOKEN_SECRET', 'BERGCLOUD_ACCESS_TOKEN', 'BERGCLOUD_ACCESS_TOKEN_SECRET', 'NS_AUTH_STRING', 'DEBUG']:
         app.config[var] = os.environ.get(var)
 
     app.config['REDIS_URL'] = os.environ.get('REDIS_URL', False)

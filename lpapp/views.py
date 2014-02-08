@@ -5,6 +5,7 @@ import hashlib
 from random import choice
 
 from lpapp import app, db
+from nsapi.api import NSApi
 
 
 @app.route('/')
@@ -15,6 +16,13 @@ def root():
 @app.route('/icon.png')
 def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
+
+
+@app.route('/api/')
+def ns_api():
+    api = NSApi(app.config['NS_AUTH_STRING'])
+    results = api.get('Delft', 'Rotterdam')
+    return render_template('api.html', results=results)
 
 
 # == POST parameters:
