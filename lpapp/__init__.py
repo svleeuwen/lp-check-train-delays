@@ -14,7 +14,7 @@ import urlparse
 DEBUG = False
 
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
 app.config.from_object(__name__)
 
 try:

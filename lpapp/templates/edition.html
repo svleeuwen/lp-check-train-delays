@@ -1,9 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>Little Printer - Trein vertragingen</title>
+    <style>
+        body {
+            background: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 1.2em;
+            color: #000;
+            width: 384px;
+            margin: 0px;
+            padding: 20px 0px;
+            text-align: center;
+        }
+
+        h1 {
+            word-wrap: break-word;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            border-top: 1px solid;
+            border-bottom: 1px solid;
+            padding: 10px 5px;
+        }
+
+        td:first-child {
+
+            padding: 0 0 0 12px;
+        }
+
+        td.delay {
+            font-weight: bold;
+            text-align: left;
+        }
+        td:last-child {
+        }
+    </style>
 </head>
 <body>
+<header>
+    <h1>{{ from_station }} - {{ to_station }}</h1>
+</header>
+<section class='results'>
+    <table>
+        <tr>
+            <td class="time">
+                12:04
+            </td>
+            <td class="delay">+2</td>
+            <td class="type">Intercity</td>
+        </tr>
+        <tr>
+            <td class="time">
+                12:04
+            </td>
+            <td class="delay">+2</td>
+            <td class="type">Intercity</td>
+        </tr>
+        <tr>
+            <td class="time">
+                12:04
+            </td>
+            <td class="delay">+2</td>
+            <td class="type">Intercity</td>
+        </tr>
+    </table>
 
+
+    {% for result in results %}
+    <li>
+        <table>
+            <tr>
+                <td>
+                    {{ result.departure_planned }}
+                </td>
+                <td>{{ result.delay }}</td>
+                <td>{{ result.train_type }}</td>
+            </tr>
+        </table>
+    </li>
+    {% endfor %}
+    </ul>
+</section>
+<footer></footer>
 </body>
 </html>

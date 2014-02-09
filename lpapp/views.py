@@ -1,10 +1,10 @@
 # coding: utf-8
 from datetime import datetime
-from flask import json, jsonify, make_response, render_template, Response, request, send_from_directory
+from flask import json, jsonify, make_response, render_template, Response, request, send_from_directory, url_for
 import hashlib
 from random import choice
 
-from lpapp import app, db
+from lpapp import app, db, client
 from nsapi.api import NSApi
 
 
@@ -18,11 +18,17 @@ def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
 
 
-@app.route('/api/')
+FROM_STATION = 'Delft'
+TO_STATION = 'Rotterdam'
+
+@app.route('/edition/')
 def ns_api():
     api = NSApi(app.config['NS_AUTH_STRING'])
-    results = api.get('Delft', 'Rotterdam')
-    return render_template('api.html', results=results)
+    #results = api.get(FROM_STATION, TO_STATION)
+    results = []
+    return render_template('edition.html', results=results,
+                                       from_station=FROM_STATION,
+                                       to_station=TO_STATION)
 
 
 # == POST parameters:
@@ -144,12 +150,12 @@ def push_post():
         config = json.loads(config)
 
         # Get a random greeting in this subscriber's chosen language.
-        greeting = choice(app.config['GREETINGS'][ config['lang'] ])
+        #greeting = choice(app.config['GREETINGS'][ config['lang'] ])
 
         # Make the HTML content to push to the printer.
         content = render_template(
-                                'edition.html',
-                                greeting="%s, %s" % (greeting, config['name']))
+                                'edition.html')
+                                #greeting="%s, %s" % (greeting, config['name']))
 
         # Post this content to BERG Cloud using OAuth.
         response, data = client().request(
