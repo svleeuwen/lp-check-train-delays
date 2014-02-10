@@ -1,18 +1,15 @@
 # coding: utf-8
-from datetime import datetime
-import dateutil.parser
-from flask import Flask, abort, g, json, jsonify, make_response, render_template, Response, request, send_from_directory
-import hashlib
-import oauth2 as oauth
+from datetime import timedelta
 import os
-from random import choice
-import redis
 import urlparse
+from celery import Celery
+import oauth2 as oauth
+import redis
+from flask import Flask, g
 
 
 # Default configuration
 DEBUG = False
-
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -25,7 +22,9 @@ try:
 
 except IOError as e:
     # Otherwise, use environment variables.
-    for var in ['BERGCLOUD_CONSUMER_TOKEN', 'BERGCLOUD_CONSUMER_TOKEN_SECRET', 'BERGCLOUD_ACCESS_TOKEN', 'BERGCLOUD_ACCESS_TOKEN_SECRET', 'NS_AUTH_STRING', 'DEBUG']:
+    for var in ['BERGCLOUD_CONSUMER_TOKEN', 'BERGCLOUD_CONSUMER_TOKEN_SECRET', 'BERGCLOUD_ACCESS_TOKEN',
+                'BERGCLOUD_ACCESS_TOKEN_SECRET', 'CELERY_BROKER_URL', 'CELERY_RESULT_BACKEND', 'NS_AUTH_STRING',
+                'DEBUG']:
         app.config[var] = os.environ.get(var)
 
     app.config['REDIS_URL'] = os.environ.get('REDIS_URL', False)

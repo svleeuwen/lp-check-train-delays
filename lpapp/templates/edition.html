@@ -40,10 +40,16 @@
         }
         td:last-child {
         }
+
+
+        footer {
+            margin: 20px 0 20px 0;
+        }
     </style>
 </head>
 <body>
 <header>
+    <img src="/static/img/train.jpg">
     <h1>{{ from_station }} - {{ to_station }}</h1>
 </header>
 <section class='results'>
@@ -87,6 +93,8 @@
     {% endfor %}
     </ul>
 </section>
-<footer></footer>
+<footer>
+    <img src="/static/img/train-line.jpg">
+</footer>
 </body>
 </html>
