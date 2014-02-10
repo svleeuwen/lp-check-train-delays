@@ -24,11 +24,29 @@ TO_STATION = 'Rotterdam'
 @app.route('/edition/')
 def ns_api():
     api = NSApi(app.config['NS_AUTH_STRING'])
-    #results = api.get(FROM_STATION, TO_STATION)
-    results = []
+    departure_time = datetime.strftime(datetime.now(), NSApi.DATE_TIME_FORMAT)
+    results = api.get(FROM_STATION, TO_STATION, departure_time)
+    #results = []
     return render_template('edition.html', results=results,
                                        from_station=FROM_STATION,
                                        to_station=TO_STATION)
+
+@app.route('/test/')
+def test():
+    api = NSApi(app.config['NS_AUTH_STRING'])
+    for subscription_id, config in db().hgetall('train_delays:api_queue').iteritems():
+        user_settings = json.loads(config)
+        today = datetime.today()
+        time_slot_begin = datetime.combine(today, datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time())
+
+        departure_time = datetime.strftime(time_slot_begin, NSApi.DATE_TIME_FORMAT)
+        import pdb;pdb.set_trace()
+        delays = api.get(user_settings['from_station'], user_settings['to_station'], departure_time)
+        time_slot_end = datetime.combine(today, datetime.strptime(user_settings['time_slot_end'], '%H:%M').time())
+        # filter delays to match time frame
+        delays = [d for d in delays if d['departure_actual'] <= time_slot_end]
+        #if delays:
+        print delays
 
 
 # == POST parameters:
@@ -95,7 +113,7 @@ def validate_config():
         # Assuming the form validates, we store the endpoint, plus this user's
         # language choice and name, keyed by their subscription_id.
         user_settings['endpoint'] = request.form.get('endpoint')
-        db().hset('push_example:subscriptions',
+        db().hset('train_delays:subscriptions',
                     request.form.get('subscription_id'),
                     json.dumps(user_settings))
 
@@ -145,7 +163,7 @@ def push_post():
     subscribed_count = 0
     unsubscribed_count = 0
 
-    for subscription_id, config in db().hgetall('push_example:subscriptions').iteritems():
+    for subscription_id, config in db().hgetall('train_delays:subscriptions').iteritems():
         # config contains the subscriber's language, name and endpoint.
         config = json.loads(config)
 
