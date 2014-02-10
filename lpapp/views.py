@@ -18,14 +18,13 @@ def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
 
 
-FROM_STATION = 'Delft'
+FROM_STATION = 'Amsterdam'
 TO_STATION = 'Rotterdam'
 
 @app.route('/edition/')
 def ns_api():
     api = NSApi(app.config['NS_AUTH_STRING'])
-    departure_time = datetime.strftime(datetime.now(), NSApi.DATE_TIME_FORMAT)
-    results = api.get(FROM_STATION, TO_STATION, departure_time)
+    results = api.get(FROM_STATION, TO_STATION, datetime.now())
     #results = []
     return render_template('edition.html', results=results,
                                        from_station=FROM_STATION,
@@ -33,20 +32,19 @@ def ns_api():
 
 @app.route('/test/')
 def test():
-    api = NSApi(app.config['NS_AUTH_STRING'])
-    for subscription_id, config in db().hgetall('train_delays:api_queue').iteritems():
-        user_settings = json.loads(config)
-        today = datetime.today()
-        time_slot_begin = datetime.combine(today, datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time())
-
-        departure_time = datetime.strftime(time_slot_begin, NSApi.DATE_TIME_FORMAT)
-        import pdb;pdb.set_trace()
-        delays = api.get(user_settings['from_station'], user_settings['to_station'], departure_time)
-        time_slot_end = datetime.combine(today, datetime.strptime(user_settings['time_slot_end'], '%H:%M').time())
-        # filter delays to match time frame
-        delays = [d for d in delays if d['departure_actual'] <= time_slot_end]
-        #if delays:
-        print delays
+    with app.app_context():
+        api = NSApi(app.config['NS_AUTH_STRING'])
+        for subscription_id, config in db().hgetall('train_delays:api_queue').iteritems():
+            user_settings = json.loads(config)
+            today = datetime.today()
+            time_slot_begin = datetime.combine(today, datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time())
+            delays = api.get(user_settings['from_station'], user_settings['to_station'], time_slot_begin)
+            print delays
+            time_slot_end = datetime.combine(today, datetime.strptime(user_settings['time_slot_end'], '%H:%M').time())
+            # filter delays to match time frame
+            delays = [d for d in delays if d['departure_actual'] <= time_slot_end]
+            #if delays:
+            print delays
 
 
 # == POST parameters:

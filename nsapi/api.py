@@ -23,7 +23,7 @@ class NSApi(object):
                                    departure_time=self._strftime(departure_time),
                                    include_highspeed=include_highspeed,
                                    num_previous_advices=num_previous_advices)
-
+        print url
 
         request = urllib2.Request(url)
         request.add_header("Authorization", "Basic %s" % self.auth_string)
