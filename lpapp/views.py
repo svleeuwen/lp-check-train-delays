@@ -32,19 +32,23 @@ def ns_api():
 
 @app.route('/test/')
 def test():
-    with app.app_context():
-        api = NSApi(app.config['NS_AUTH_STRING'])
-        for subscription_id, config in db().hgetall('train_delays:api_queue').iteritems():
-            user_settings = json.loads(config)
-            today = datetime.today()
-            time_slot_begin = datetime.combine(today, datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time())
-            delays = api.get(user_settings['from_station'], user_settings['to_station'], time_slot_begin)
-            print delays
-            time_slot_end = datetime.combine(today, datetime.strptime(user_settings['time_slot_end'], '%H:%M').time())
-            # filter delays to match time frame
-            delays = [d for d in delays if d['departure_actual'] <= time_slot_end]
-            #if delays:
-            print delays
+    api = NSApi(app.config['NS_AUTH_STRING'])
+    for subscription_id, config in db().hgetall('train_delays:api_queue').iteritems():
+        user_settings = json.loads(config)
+        today = datetime.today()
+        time_slot_begin = datetime.combine(today, datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time())
+        delays = api.get(user_settings['from_station'], user_settings['to_station'], time_slot_begin)
+        time_slot_end = datetime.combine(today, datetime.strptime(user_settings['time_slot_end'], '%H:%M').time())
+        # filter delays to match time frame
+        delays = [d for d in delays if d['departure_actual'] <= time_slot_end.time()]
+        #if delays:
+        print delays
+
+        data = dict(results=delays, from_station=user_settings['from_station'], to_station=user_settings['to_station'])
+        return render(data)
+
+def render(data):
+    return render_template('edition.html', **data)
 
 
 # == POST parameters:

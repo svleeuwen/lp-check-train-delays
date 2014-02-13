@@ -18,10 +18,9 @@ def check_time_frames():
             time_slot_begin = datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time()
             time_slot_end = datetime.strptime(user_settings['time_slot_end'], '%H:%M').time()
             # add to api queue
-            if not db().hexists('train_delays:api_queue', subscription_id):
-                if time_slot_begin <= now <= time_slot_end:
-                    db().hset('train_delays:api_queue', subscription_id, config)
-            else:
+            if time_slot_begin <= now <= time_slot_end:
+                db().hset('train_delays:api_queue', subscription_id, config)
+            elif db().hexists('train_delays:api_queue', subscription_id):
                 db().hdel('train_delays:api_queue', subscription_id)
 
 @celery.task
@@ -33,10 +32,9 @@ def poll_api():
             today = datetime.today()
             time_slot_begin = datetime.combine(today, datetime.strptime(user_settings['time_slot_begin'], '%H:%M').time())
             delays = api.get(user_settings['from_station'], user_settings['to_station'], time_slot_begin)
-            print delays
             time_slot_end = datetime.combine(today, datetime.strptime(user_settings['time_slot_end'], '%H:%M').time())
             # filter delays to match time frame
-            delays = [d for d in delays if d['departure_actual'] <= time_slot_end]
+            delays = [d for d in delays if d['departure_actual'] <= time_slot_end.time()]
             #if delays:
             print delays
 

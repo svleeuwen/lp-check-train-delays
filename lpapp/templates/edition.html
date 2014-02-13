@@ -31,16 +31,16 @@
 
         td:first-child {
 
-            padding: 0 0 0 12px;
+            padding: 0 0 0 21px;
         }
 
         td.delay {
             font-weight: bold;
             text-align: left;
         }
+
         td:last-child {
         }
-
 
         footer {
             margin: 20px 0 20px 0;
@@ -50,47 +50,23 @@
 <body>
 <header>
     <img src="/static/img/train.jpg">
+
     <h1>{{ from_station }} - {{ to_station }}</h1>
 </header>
 <section class='results'>
     <table>
+        {% for result in results %}
         <tr>
-            <td class="time">
-                12:04
+            <td>
+                {{ result.departure_planned_str }}
             </td>
-            <td class="delay">+2</td>
-            <td class="type">Intercity</td>
-        </tr>
-        <tr>
-            <td class="time">
-                12:04
+            <td class="delay">
+                {{ result.delay }}
             </td>
-            <td class="delay">+2</td>
-            <td class="type">Intercity</td>
+            <td>{{ result.train_type }}</td>
         </tr>
-        <tr>
-            <td class="time">
-                12:04
-            </td>
-            <td class="delay">+2</td>
-            <td class="type">Intercity</td>
-        </tr>
+        {% endfor %}
     </table>
-
-
-    {% for result in results %}
-    <li>
-        <table>
-            <tr>
-                <td>
-                    {{ result.departure_planned }}
-                </td>
-                <td>{{ result.delay }}</td>
-                <td>{{ result.train_type }}</td>
-            </tr>
-        </table>
-    </li>
-    {% endfor %}
     </ul>
 </section>
 <footer>
