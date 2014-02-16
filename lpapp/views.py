@@ -45,9 +45,9 @@ def test():
         print delays
 
         data = dict(results=delays, from_station=user_settings['from_station'], to_station=user_settings['to_station'])
-        return render(data)
+        return render_edition(data)
 
-def render(data):
+def render_edition(data):
     return render_template('edition.html', **data)
 
 

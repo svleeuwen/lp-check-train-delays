@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Little Printer - Trein vertragingen</title>
+    <title>Little Printer - Trein vertragingen op jouw traject</title>
+    <link href='http://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
     <style>
         body {
             background: #fff;
@@ -9,13 +10,18 @@
             font-size: 1.2em;
             color: #000;
             width: 384px;
-            margin: 0px;
-            padding: 20px 0px;
+            margin: 0;
+            padding: 0;
             text-align: center;
         }
 
-        h1 {
+        h1, h2 {
             word-wrap: break-word;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        h1 {
+            /*margin: 10px 0;*/
         }
 
         table {
@@ -49,9 +55,10 @@
 </head>
 <body>
 <header>
-    <img src="/static/img/train.jpg">
+    <h1>Vertraging</h1>
+    <img src="http://83.85.81.247:5000/static/img/train.jpg">
 
-    <h1>{{ from_station }} - {{ to_station }}</h1>
+    <h2>{{ from_station }} - {{ to_station }}</h2>
 </header>
 <section class='results'>
     <table>
@@ -67,10 +74,9 @@
         </tr>
         {% endfor %}
     </table>
-    </ul>
 </section>
 <footer>
-    <img src="/static/img/train-line.jpg">
+    <img src="http://83.85.81.247:5000/static/img/train-line.jpg">
 </footer>
 </body>
 </html>
