@@ -1,8 +1,6 @@
 # coding: utf-8
-from datetime import timedelta
 import os
 import urlparse
-from celery import Celery
 import oauth2 as oauth
 import redis
 from flask import Flask, g
@@ -19,12 +17,10 @@ try:
     filename = os.path.join(os.path.dirname(__file__), '../settings.cfg')
     with open(filename) as f:
         app.config.from_pyfile(filename)
-
 except IOError as e:
     # Otherwise, use environment variables.
     for var in ['BERGCLOUD_CONSUMER_TOKEN', 'BERGCLOUD_CONSUMER_TOKEN_SECRET', 'BERGCLOUD_ACCESS_TOKEN',
-                'BERGCLOUD_ACCESS_TOKEN_SECRET', 'CELERY_BROKER_URL', 'CELERY_RESULT_BACKEND', 'NS_AUTH_STRING',
-                'DEBUG']:
+                'BERGCLOUD_ACCESS_TOKEN_SECRET', 'NS_AUTH_STRING', 'DEBUG']:
         app.config[var] = os.environ.get(var)
 
     app.config['REDIS_URL'] = os.environ.get('REDIS_URL', False)

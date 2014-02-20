@@ -1,5 +1,6 @@
+import os
 from datetime import timedelta
-REDIS_URL = 'redis://127.0.0.1:6379'
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')
 BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
 CELERYBEAT_SCHEDULE={
