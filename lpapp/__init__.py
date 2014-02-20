@@ -25,6 +25,7 @@ except IOError as e:
 
     app.config['REDIS_URL'] = os.environ.get('REDISTOGO_URL', False)
 
+app.debug = app.config['DEBUG']
 
 # Returns the Redis object (either new or existing).
 def db():
