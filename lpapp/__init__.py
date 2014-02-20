@@ -23,7 +23,7 @@ except IOError as e:
                 'BERGCLOUD_ACCESS_TOKEN_SECRET', 'NS_AUTH_STRING', 'DEBUG']:
         app.config[var] = os.environ.get(var)
 
-    app.config['REDIS_URL'] = os.environ.get('REDIS_URL', False)
+    app.config['REDIS_URL'] = os.environ.get('REDISTOGO_URL', False)
 
 
 # Returns the Redis object (either new or existing).
