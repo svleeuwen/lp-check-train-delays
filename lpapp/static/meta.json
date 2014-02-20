@@ -1,32 +1,48 @@
 {
-  "owner_email": "publishers@bergcloud.com",
+  "owner_email": "replytosander@gmail.com",
   "publication_api_version": "1.0",
   "delivery_type": "push",
-  "name": "Push example",
-  "description": "Example push publication for Little Printer",
-  "delivered_on": "when an event happens",
-  "send_timezone_info": true,
+  "name": "Trein vertraging",
+  "description": "Stuurt een publicatie bij treinvertraging op jouw traject",
+  "delivered_on": "als er vertraging vanaf je vertrekstation binnen de aangegeven tijdsperiode",
+  "send_timezone_info": false,
   "send_delivery_count": false,
   "external_configuration": false,
   "config": {
     "fields": [
       {
         "type": "text",
-        "name": "name",
-        "label": "Enter your name"
+        "name": "time_slot_begin",
+        "label": "Tijd van (uu:mm)"
+      },
+      {
+        "type": "text",
+        "name": "time_slot_end",
+        "label": "Tijd tot (uu:mm)"
+      },
+      {
+        "type": "text",
+        "name": "push_offset_minutes",
+        "label": "Vanaf hoeveel minuten vóór de begintijd mag er gepushed worden?"
       },
       {
         "type": "select",
-        "name": "lang",
-        "label": "Select your greeting language",
+        "name": "from_station",
+        "label": "Station van",
         "options": [
-          ["English", "english"],
-          ["French", "french"],
-          ["German", "german"],
-          ["Spanish", "spanish"],
-          ["Portuguese", "portuguese"],
-          ["Italian", "italian"],
-          ["Swedish", "swedish"]
+          ["Delft", "delft"],
+          ["Rotterdam", "rotterdam"],
+          ["Schiedam", "schiedam"]
+        ]
+      },
+      {
+        "type": "select",
+        "name": "to_station",
+        "label": "Station naar",
+        "options": [
+          ["Delft", "delft"],
+          ["Rotterdam", "rotterdam"],
+          ["Schiedam", "schiedam"]
         ]
       }
     ]

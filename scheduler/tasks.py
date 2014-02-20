@@ -50,8 +50,8 @@ def poll_api():
 
             # filter delays to match time frame
             delays = [d for d in delays if d['departure_actual'] <= time_slot_end.time()]
-            #if delays:
-            send_to_printer(subscription_id, delays, user_settings)
+            if delays:
+                send_to_printer(subscription_id, delays, user_settings)
 
 
 def send_to_printer(subscription_id, delays, user_settings):
@@ -59,7 +59,7 @@ def send_to_printer(subscription_id, delays, user_settings):
                               from_station=user_settings['from_station'],
                               to_station=user_settings['to_station'])
 
-    # new content?
+    # check if we have new content
     tag = '"%s"' % (
         hashlib.md5(
             content + dt.datetime.utcnow().strftime('%d%m%Y')
@@ -88,9 +88,7 @@ def send_to_printer(subscription_id, delays, user_settings):
         # By sending a 410 status code, BERG Cloud has informed us this
         # user has unsubscribed. So delete their subscription from our
         # database.
-        # TODO enable in production
-        #db().hdel('train_delays:subscriptions', subscription_id)
-        pass
+        db().hdel('train_delays:subscriptions', subscription_id)
     else:
         pass
         #db().hdel('train_delays:subscriptions', subscription_id)
