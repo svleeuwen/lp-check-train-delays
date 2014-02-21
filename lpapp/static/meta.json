@@ -3,8 +3,8 @@
   "publication_api_version": "1.0",
   "delivery_type": "push",
   "name": "Trein vertraging",
-  "description": "Stuurt een publicatie bij treinvertraging op jouw traject",
-  "delivered_on": "als er vertraging vanaf je vertrekstation binnen de aangegeven tijdsperiode",
+  "description": "Stuurt een publicatie bij treinvertraging op jouw traject. (Dutch railway only)",
+  "delivered_on": "Zodra er vertraging is binnen de aangegeven tijdsperiode",
   "send_timezone_info": false,
   "send_delivery_count": false,
   "external_configuration": false,
@@ -23,7 +23,7 @@
       {
         "type": "text",
         "name": "push_offset_minutes",
-        "label": "Vanaf hoeveel minuten vóór de begintijd mag er gepushed worden?"
+        "label": "Vanaf hoeveel minuten vóór de begintijd wil je een bericht krijgen over een eventuele vertraging?"
       },
       {
         "type": "select",

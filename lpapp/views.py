@@ -69,7 +69,6 @@ def render_edition(data):
 # A JSON response object.
 # If the parameters passed in are valid: {"valid":true}
 # If the parameters passed in are not valid: {"valid":false,"errors":["No name was provided"], ["The language you chose does not exist"]}
-#
 @app.route('/validate_config/', methods=['POST'])
 def validate_config():
     if 'config' not in request.form:
@@ -86,23 +85,27 @@ def validate_config():
     user_settings = json.loads(request.form.get('config', {}))
 
     # If the user did not choose a language:
-    if 'lang' not in user_settings or user_settings['lang'] == '':
+    if 'from_station' not in user_settings or user_settings['from_station'] == '':
         response['valid'] = False
-        response['errors'].append('Please choose a language from the menu.')
+        response['errors'].append('Kies een beginstation.')
 
     # If the user did not fill in the name option:
-    if 'name' not in user_settings or user_settings['name'] == '':
+    if 'to_station' not in user_settings or user_settings['to_station'] == '':
         response['valid'] = False
-        response['errors'].append('Please enter your name into the name box.')
+        response['errors'].append('Kies een eindstation.')
 
-    if user_settings['lang'].lower() not in app.config['GREETINGS']:
-        # Given that the select field is populated from a list of languages
-        # we defined this should never happen. Just in case.
+    if 'time_slot_begin' not in user_settings or not valid_time(user_settings['time_slot_begin']):
         response['valid'] = False
-        response['errors'].append("We couldn't find the language you selected (%s). Please choose another." % user_settings['lang'])
+        response['errors'].append('Kies een geldige begintijd in de vorm uu:mm.')
 
-    ########################
-    # This section is Push-specific, different to a conventional publication:
+    if 'time_slot_end' not in user_settings or not valid_time(user_settings['time_slot_end']):
+        response['valid'] = False
+        response['errors'].append('Kies een geldige eindtijd in de vorm uu:mm.')
+
+    if 'push_offset_minutes' not in user_settings or user_settings['push_offset_minutes'] == '':
+        user_settings['push_offset_minutes'] = 0
+
+    # check push specific settings
     if request.form.get('endpoint', '') == '':
         response['valid'] = False
         response['errors'].append('No Push endpoint was provided.')
@@ -113,14 +116,11 @@ def validate_config():
 
     if response['valid']:
         # Assuming the form validates, we store the endpoint, plus this user's
-        # language choice and name, keyed by their subscription_id.
+        # settings, keyed by their subscription_id.
         user_settings['endpoint'] = request.form.get('endpoint')
         db().hset('train_delays:subscriptions',
                     request.form.get('subscription_id'),
                     json.dumps(user_settings))
-
-    # Ending the Push-specific section.
-    ########################
 
     return jsonify(**response)
 
@@ -198,3 +198,13 @@ def push_post():
                             pushed=True,
                             subscribed_count=subscribed_count,
                             unsubscribed_count=unsubscribed_count)
+
+
+### Utils
+
+def valid_time(time_string):
+    try:
+        datetime.strptime(time_string, '%H:%M')
+    except ValueError:
+        return False
+    return True
