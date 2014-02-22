@@ -7,7 +7,7 @@ from flask import Flask, g
 
 
 # Default configuration
-DEBUG = False
+DEBUG = True
 
 app = Flask(__name__)
 app.config.from_object(__name__)
