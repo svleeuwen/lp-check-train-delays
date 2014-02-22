@@ -2,8 +2,7 @@
 from datetime import datetime
 from flask import json, jsonify, make_response, render_template, Response, request, send_from_directory, url_for
 import hashlib
-from random import choice
-
+import datetime as dt
 from lpapp import app, db, client
 from nsapi.api import NSApi
 
@@ -135,20 +134,39 @@ def validate_config():
 #
 @app.route('/sample/')
 def sample():
-    # The values we'll use for the sample:
-    language = 'english'
-    name = 'Little Printer'
-    response = make_response(render_template(
-            'edition.html',
-            greeting="%s, %s" % (app.config['GREETINGS'][language][0], name),
-        ))
+    sample_data = {
+        'from_station': 'Delft',
+        'to_station': 'Rotterdam',
+        'delays': [
+            {
+                'departure_planned_str': '12:43',
+                'delay': '+2',
+                'train_type': 'Intercity'
+            },
+            {
+                'departure_planned_str': '12:46',
+                'delay': '+1',
+                'train_type': 'Sprinter'
+            },
+            {
+                'departure_planned_str': '12:51',
+                'delay': '+1',
+                'train_type': 'Intercity'
+            }
+        ]
+    }
+
+    content = render_template('edition.html', results=sample_data['delays'],
+                              from_station=sample_data['from_station'],
+                              to_station=sample_data['to_station'])
+    response = make_response(content)
+
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
     # Set the ETag to match the content.
     response.headers['ETag'] = '"%s"' % (
         hashlib.md5(
-            language + name + datetime.utcnow().strftime('%d%m%Y')
-        ).hexdigest()
-    )
+            content + dt.datetime.utcnow().strftime('%d%m%Y')
+        ).hexdigest())
     return response
 
 
